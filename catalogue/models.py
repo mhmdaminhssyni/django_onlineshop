@@ -37,7 +37,11 @@ class ProductAttribute(models.Model):
     
 class Category(models.Model):
     name = models.CharField(max_length=32)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children',
+                               null=True, blank=True)
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
     
     def __str__(self):
         return self.name
@@ -45,7 +49,8 @@ class Category(models.Model):
     
 class Brand(models.Model):
     name = models.CharField(max_length=32)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children',
+                               null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -56,8 +61,8 @@ class Product(models.Model):
     upc = models.BigIntegerField(unique=True)
     title = models.CharField(max_length=32)
     description = models.TextField(blank = True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products_cat')
-    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='products_brand')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='products')
     
     def __str__(self):
         return self.title
