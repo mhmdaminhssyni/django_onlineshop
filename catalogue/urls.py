@@ -1,7 +1,7 @@
-from catalogue.views import catalogue_list, category_list,catalogue_detail
+from catalogue.views import products_list, product_detail, category_products
 from django.urls import path, include
 urlpatterns = [
-                path('list/', catalogue_list),
-                path('categories/list/', category_list),
-                path('catalogue/<str:catalogue_title>/', catalogue_detail)
-                ]
+    path('product/list/', products_list, name='product-list'),
+    path('product/detail/<int:pk>/', product_detail, name='product-detail'),
+    path('category/<int:pk>/products/', category_products, name='category-products')
+]
