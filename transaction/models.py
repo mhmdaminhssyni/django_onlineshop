@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.db.models import Count, Sum, Q
 from django.db.models.functions import Coalesce
@@ -112,3 +112,19 @@ class TranferTransaction(models.Model):
         instance = cls.objects.create(sender_transaction=sender_transaction, receiver_transaction=receiver_transaction)
         return instance
     
+    
+class UserScore(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    score = models.PositiveSmallIntegerField()
+    
+    @classmethod
+    def change_score(slc, user, score):
+        instance = cls.objects.select_for_update().filter(user=user)
+        with transaction.atomic():
+            if not instance.exist():
+                instance = cls.objects.create(user=user, score=0)
+            else:
+                instance = instance.first()
+            instance.score += score
+            instance.save()
+            
