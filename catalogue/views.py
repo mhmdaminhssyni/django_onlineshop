@@ -50,4 +50,11 @@ def category_products(request, pk):
     return HttpResponse(context)
     
 def products_search(request):
-    return HttpResponse('search page')
+    title = request.GET.get('q')
+    products = Product.objects.actives(title__icontains=title,
+                                      category__name__icontains=title
+                                    #   title__istartswith=title
+                                      )
+    context = "\n".join([f"{product.title}, {product.upc}" for product in products])
+
+    return HttpResponse(f"search page, {context}")

@@ -1,6 +1,14 @@
 from django.db import models
 
 # Create your models here.
+
+class IsActiveManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).select_related('brand', 'category')
+    def actives(self, *args, **kwargs):
+        return self.get_queryset().filter(is_active=True)
+    def deactives(self, *args, **kwargs):
+        return self.get_queryset().exclude(is_active=True)
 class ProductType(models.Model):
     title = models.CharField(max_length=32, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -54,6 +62,8 @@ class Brand(models.Model):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children',
                                null=True, blank=True)
     
+    
+    
     def __str__(self):
         return self.name
     
@@ -66,7 +76,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='products')
     is_active = models.BooleanField(default=True)
-    
+    default_manager = models.Manager()
+    objects = IsActiveManager()
     def __str__(self):
         return self.title
    
