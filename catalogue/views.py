@@ -49,4 +49,5 @@ def category_products(request, pk):
     context = "\n".join([f"{product.title}, {product.upc}" for product in products])
     return HttpResponse(context)
     
-
+def products_search(request):
+    return HttpResponse('search page')
