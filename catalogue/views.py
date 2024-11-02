@@ -2,6 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound
 from catalogue.models import Product, ProductType, Category, Brand
 from django.db.models import Q
+from django.views.decorators.http import require_http_methods, require_POST
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from transaction.models import UserScore
+
 # Create your views here.
 
 def products_list(request):
@@ -58,3 +62,16 @@ def products_search(request):
     context = "\n".join([f"{product.title}, {product.upc}" for product in products])
 
     return HttpResponse(f"search page, {context}")
+
+@login_required()
+@require_http_methods(['GET'])
+# @user_passes_test(check_is_active)
+@permission_required('transaction.has_permission_scores')
+def user_profile(request):
+    return HttpResponse(f"hello {request.user.username}")
+
+
+@login_required
+@require_POST
+def campaign(request):
+    return HttpResponse(f"hello {request.user.username}")

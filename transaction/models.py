@@ -118,6 +118,10 @@ class TranferTransaction(models.Model):
 class UserScore(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     score = models.PositiveSmallIntegerField()
+    class Meta:
+        permissions = [
+            ("has_permission_score", "user has score permission")
+        ]
     
     @classmethod
     def change_score(cls, user, score):
