@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, Http404
 from catalogue.models import Product, ProductType, Category, Brand
 from django.db.models import Q
 from django.views.decorators.http import require_http_methods, require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from transaction.models import UserScore
-
+import os
 # Create your views here.
 
 def products_list(request):
@@ -23,9 +23,9 @@ def products_list(request):
         
     # )
     
-    product = Product.objects.select_related('category').all()
-    context = "\n".join([f"{product.title}, {product.upc}, {product.category.name}"])
-    return HttpResponse(context)
+    context = dict()
+    context['products'] = Product.objects.select_related('category').all()
+    return render(request, 'catalogue/product_list.html', context=context)
     
     # return HttpResponse(f"new product is: {new_product.title}")
 
@@ -33,10 +33,13 @@ def products_list(request):
 def product_detail(request, pk):
     queryset = Product.objects.filter(is_active=True).filter(Q(pk=pk) | Q(upc=pk))
     if queryset.exists():
-        product = queryset.first()
-        return HttpResponse(f"title: {product.title}")
-    return HttpResponseNotFound("Category does not exist")
-    
+        context = dict()
+        context['product'] = queryset.first()
+        
+        return render(request, 'catalogue/product_detail.html', context=context)
+    #   return HttpResponse(f"title: {product.title}")
+    # return HttpResponseNotFound("Category does not exist")
+    raise Http404('not found')
     
 def category_products(request, pk):
     try:

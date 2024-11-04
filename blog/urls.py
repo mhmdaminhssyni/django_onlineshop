@@ -5,7 +5,8 @@ urlpatterns = [
                 path('list/', post_list),
                 path('category/list/', category_list),
                 path('detail/<str:post_title>/', post_detail),
-                path('archieve/<int:year>/', post_list)
+                path('archieve/<int:year>/', post_list),
+                
                ]
 
 
