@@ -56,6 +56,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('category-detail', args=[self.pk])
+    
     
 class Brand(models.Model):
     name = models.CharField(max_length=32)
@@ -70,6 +74,7 @@ class Brand(models.Model):
     
 class Product(models.Model):
     product_type = models.ForeignKey(ProductType, on_delete=models.PROTECT, related_name='product_types')
+    # image = models.ImageField(blank=True, null=True, upload_to='products/')
     upc = models.BigIntegerField(unique=True)
     title = models.CharField(max_length=32)
     description = models.TextField(blank = True)
@@ -85,6 +90,12 @@ class Product(models.Model):
     def stock(self):
          return self.partners.all().order_by('price').first()
     
+class ProductImage(models.Model):
+    image = models.ImageField(upload_to='products/')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+
+    def __str__(self):
+        return str(self.product)
 class ProductAttributeValue(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='attribute_values')
     attribute = models.ForeignKey(ProductAttribute, on_delete=models.PROTECT, related_name='values')

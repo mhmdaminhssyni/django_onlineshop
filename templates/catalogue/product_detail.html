@@ -6,8 +6,11 @@ product detail page
 
 {% block content %}
 <h2>product details:</h2>
+    {% for pi in product.images.all %}
+        <img src="{{ pi.image.url }}">
+    {% endfor %}
     <ul>
-        <li>{{ product.title }}</li>
+        <li>{{ product.title|title }}</li>
         <li>{{ product.description }}</li>
         <li>{{ product.brand}}</li>
         <li>${{ product.stock.price }}</li>
